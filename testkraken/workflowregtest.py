@@ -556,6 +556,16 @@ class WorkflowRegtest:
                     raise SpecificationError(
                         "Every value in fixed_env element must be a dictionary or list."
                     )
+    def download_datalad_repo(self):
+        if not self.params["data"].get("url"):
+            raise ValueError(
+                "A value for url must be provided if the data "
+                "type is datalad_repo "
+                )
+        # Get directory name for repository
+        import pdb;pdb.set_trace()
+        dirname = Path()
+
 
     def _validate_download_data(self):
         """ validate the data part of the parameters"""
@@ -585,9 +595,15 @@ class WorkflowRegtest:
                     self.params["data"]["location"]
                 ).absolute()
             elif self.params["data"]["type"] == "datalad_repo":
-                # TODO: download data
-                # TODO: setting self.params["data"]["location"]
-                pass
+                if self.params["data"].get("location"):
+                    self.params["data"]["location"] = Path(
+                        self.params["data"]["location"]
+                    ).absolute()
+                else:
+                    self.params["data"]["location"] = (
+                        self.workflow_path / "data"
+                    )
+                self.download_datalad_repo()
         else:
             self.params["data"] = {
                 "type": "default",
